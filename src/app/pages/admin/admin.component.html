@@ -1,0 +1,267 @@
+<!--admin.component.html-->
+<div class="min-h-screen bg-[#F5E1C0]">
+    <!-- Navbar -->
+    <nav class="bg-[#212121] p-4 shadow-lg">
+      <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-[#FFC107]">Admin Panel</h1>
+        <div class="space-x-4">
+          <button
+            (click)="goToHome()"
+            class="bg-[#388E3C] text-[#F5E1C0] px-4 py-2 rounded-lg hover:bg-[#FFC107] transition-colors duration-300"
+          >
+            Inicio
+          </button>
+          <button
+            (click)="showMesas()"
+            class="bg-[#388E3C] text-[#F5E1C0] px-4 py-2 rounded-lg hover:bg-[#FFC107] transition-colors duration-300"
+          >
+            Mesas
+          </button>
+          <button
+            (click)="showPlatillos()"
+            class="bg-[#388E3C] text-[#F5E1C0] px-4 py-2 rounded-lg hover:bg-[#FFC107] transition-colors duration-300"
+          >
+            Platillos
+          </button>
+        </div>
+      </div>
+    </nav>
+  
+    <!-- Contenido Principal -->
+    <div class="container mx-auto p-6">
+      <!-- Pedidos -->
+      <div *ngIf="showPedidos">
+        <h2 class="text-3xl font-bold text-[#D32F2F] mb-6">Pedidos</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Tarjeta de Pedido -->
+          <div
+            *ngFor="let orden of ordenes"
+            class="bg-[#212121] p-6 rounded-lg shadow-lg text-[#F5E1C0]"
+          >
+            <h3 class="text-xl font-bold text-[#FFC107]">Orden #{{ orden.id }}</h3>
+            <p class="mt-2"><span class="font-bold">Mesa:</span> {{ orden.mesa_id }}</p>
+            <p><span class="font-bold">Estado:</span> {{ orden.estado }}</p>
+            <div class="mt-4">
+              <h4 class="font-bold text-[#FFC107]">Detalles:</h4>
+              <ul class="list-disc list-inside">
+                <li *ngFor="let detalle of orden.detalles">
+                  Platillo #{{ detalle.platillo_id }} - Cantidad: {{ detalle.cantidad }}
+                </li>
+              </ul>
+            </div>
+            <div class="mt-4">
+              <button
+                (click)="openEstadoModal(orden)"
+                class="bg-[#388E3C] text-[#F5E1C0] px-4 py-2 rounded-lg hover:bg-[#FFC107] transition-colors duration-300"
+              >
+                Actualizar Estado
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Mesas -->
+      <div *ngIf="showMesasSection">
+        <h2 class="text-3xl font-bold text-[#D32F2F] mb-6">Mesas</h2>
+        <div class="flex space-x-4 mb-6">
+          <button
+            (click)="openMesaModal()"
+            class="bg-[#388E3C] text-[#F5E1C0] px-4 py-2 rounded-lg hover:bg-[#FFC107] transition-colors duration-300"
+          >
+            Agregar Mesa
+          </button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Tarjeta de Mesa -->
+          <div
+            *ngFor="let mesa of mesas"
+            class="bg-[#212121] p-6 rounded-lg shadow-lg text-[#F5E1C0]"
+          >
+            <h3 class="text-xl font-bold text-[#FFC107]">Mesa #{{ mesa.numero_mesa }}</h3>
+            <div class="mt-4">
+              <button
+                (click)="openMesaModal(mesa)"
+                class="bg-[#388E3C] text-[#F5E1C0] px-4 py-2 rounded-lg hover:bg-[#FFC107] transition-colors duration-300 mr-2"
+              >
+                Editar
+              </button>
+              <button
+                (click)="deleteMesa(mesa.id)"
+                class="bg-[#D32F2F] text-[#F5E1C0] px-4 py-2 rounded-lg hover:bg-[#FFC107] transition-colors duration-300"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Platillos -->
+      <div *ngIf="showPlatillosSection">
+        <h2 class="text-3xl font-bold text-[#D32F2F] mb-6">Platillos</h2>
+        <div class="flex space-x-4 mb-6">
+          <button
+            (click)="openPlatilloModal()"
+            class="bg-[#388E3C] text-[#F5E1C0] px-4 py-2 rounded-lg hover:bg-[#FFC107] transition-colors duration-300"
+          >
+            Agregar Platillo
+          </button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Tarjeta de Platillo -->
+          <div
+            *ngFor="let platillo of platillos"
+            class="bg-[#212121] p-6 rounded-lg shadow-lg text-[#F5E1C0]"
+          >
+            <h3 class="text-xl font-bold text-[#FFC107]">{{ platillo.nombre }}</h3>
+            <p class="mt-2">{{ platillo.descripcion }}</p>
+            <p class="mt-2"><span class="font-bold">Precio:</span> ${{ platillo.precio }}</p>
+            <div class="mt-4">
+              <button
+                (click)="openPlatilloModal(platillo)"
+                class="bg-[#388E3C] text-[#F5E1C0] px-4 py-2 rounded-lg hover:bg-[#FFC107] transition-colors duration-300 mr-2"
+              >
+                Editar
+              </button>
+              <button
+                (click)="deletePlatillo(platillo.id)"
+                class="bg-[#D32F2F] text-[#F5E1C0] px-4 py-2 rounded-lg hover:bg-[#FFC107] transition-colors duration-300"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Modal para Mesas -->
+    <div *ngIf="showMesaModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div class="bg-[#212121] p-6 rounded-lg shadow-lg text-[#F5E1C0] w-full max-w-md">
+        <h2 class="text-2xl font-bold text-[#FFC107] mb-6">{{ isEditingMesa ? 'Editar Mesa' : 'Agregar Mesa' }}</h2>
+        <form (ngSubmit)="saveMesa()">
+          <div class="mb-4">
+            <label for="numero_mesa" class="block text-sm font-medium mb-2">Número de Mesa</label>
+            <input
+              type="number"
+              id="numero_mesa"
+              [(ngModel)]="mesaForm.numero_mesa"
+              name="numero_mesa"
+              class="w-full p-2 rounded bg-[#388E3C] text-[#F5E1C0]"
+              required
+            />
+          </div>
+          <div class="flex justify-end space-x-4">
+            <button
+              type="button"
+              (click)="closeMesaModal()"
+              class="bg-[#D32F2F] text-[#F5E1C0] px-4 py-2 rounded-lg hover:bg-[#FFC107] transition-colors duration-300"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="bg-[#388E3C] text-[#F5E1C0] px-4 py-2 rounded-lg hover:bg-[#FFC107] transition-colors duration-300"
+            >
+              Guardar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  
+    <!-- Modal para Platillos -->
+    <div *ngIf="showPlatilloModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div class="bg-[#212121] p-6 rounded-lg shadow-lg text-[#F5E1C0] w-full max-w-md">
+        <h2 class="text-2xl font-bold text-[#FFC107] mb-6">{{ isEditingPlatillo ? 'Editar Platillo' : 'Agregar Platillo' }}</h2>
+        <form (ngSubmit)="savePlatillo()">
+          <div class="mb-4">
+            <label for="nombre" class="block text-sm font-medium mb-2">Nombre</label>
+            <input
+              type="text"
+              id="nombre"
+              [(ngModel)]="platilloForm.nombre"
+              name="nombre"
+              class="w-full p-2 rounded bg-[#388E3C] text-[#F5E1C0]"
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label for="descripcion" class="block text-sm font-medium mb-2">Descripción</label>
+            <textarea
+              id="descripcion"
+              [(ngModel)]="platilloForm.descripcion"
+              name="descripcion"
+              class="w-full p-2 rounded bg-[#388E3C] text-[#F5E1C0]"
+              required
+            ></textarea>
+          </div>
+          <div class="mb-4">
+            <label for="precio" class="block text-sm font-medium mb-2">Precio</label>
+            <input
+              type="number"
+              id="precio"
+              [(ngModel)]="platilloForm.precio"
+              name="precio"
+              class="w-full p-2 rounded bg-[#388E3C] text-[#F5E1C0]"
+              required
+            />
+          </div>
+          <div class="flex justify-end space-x-4">
+            <button
+              type="button"
+              (click)="closePlatilloModal()"
+              class="bg-[#D32F2F] text-[#F5E1C0] px-4 py-2 rounded-lg hover:bg-[#FFC107] transition-colors duration-300"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="bg-[#388E3C] text-[#F5E1C0] px-4 py-2 rounded-lg hover:bg-[#FFC107] transition-colors duration-300"
+            >
+              Guardar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  
+    <!-- Modal para Actualizar Estado de Pedido -->
+    <div *ngIf="showEstadoModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div class="bg-[#212121] p-6 rounded-lg shadow-lg text-[#F5E1C0] w-full max-w-md">
+        <h2 class="text-2xl font-bold text-[#FFC107] mb-6">Actualizar Estado</h2>
+        <form (ngSubmit)="updateEstado()">
+          <div class="mb-4">
+            <label for="estado" class="block text-sm font-medium mb-2">Estado</label>
+            <select
+              id="estado"
+              [(ngModel)]="selectedEstado"
+              name="estado"
+              class="w-full p-2 rounded bg-[#388E3C] text-[#F5E1C0]"
+              required
+            >
+              <option value="cancelada">Cancelada</option>
+              <option value="aceptada">Aceptada</option>
+              <option value="terminada">Terminada</option>
+            </select>
+          </div>
+          <div class="flex justify-end space-x-4">
+            <button
+              type="button"
+              (click)="closeEstadoModal()"
+              class="bg-[#D32F2F] text-[#F5E1C0] px-4 py-2 rounded-lg hover:bg-[#FFC107] transition-colors duration-300"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="bg-[#388E3C] text-[#F5E1C0] px-4 py-2 rounded-lg hover:bg-[#FFC107] transition-colors duration-300"
+            >
+              Guardar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
