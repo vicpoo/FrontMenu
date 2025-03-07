@@ -1,0 +1,10 @@
+/* Estilos personalizados para el formulario de inicio de sesión */
+input:focus {
+  outline: none;
+  border-color: #FFC107;
+}
+
+button:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}

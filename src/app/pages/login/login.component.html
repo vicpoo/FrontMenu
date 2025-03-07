@@ -1,0 +1,48 @@
+<!--login.component.html-->
+<div class="min-h-screen flex items-center justify-center bg-[#F5E1C0]">
+    <div class="bg-[#212121] p-8 rounded-lg shadow-lg text-[#F5E1C0] w-full max-w-md">
+      <h2 class="text-2xl font-bold mb-6 text-[#FFC107] text-center">Iniciar Sesión</h2>
+      <form (ngSubmit)="login()" class="space-y-6">
+        <div>
+          <label for="username" class="block text-sm font-medium mb-2">Usuario</label>
+          <input
+            type="text"
+            id="username"
+            [(ngModel)]="username"
+            name="username"
+            class="w-full p-3 rounded bg-[#388E3C] text-[#F5E1C0] placeholder-[#F5E1C0] focus:outline-none focus:ring-2 focus:ring-[#FFC107]"
+            placeholder="Ingresa tu usuario"
+            required
+          />
+        </div>
+        <div>
+          <label for="password" class="block text-sm font-medium mb-2">Contraseña</label>
+          <input
+            type="password"
+            id="password"
+            [(ngModel)]="password"
+            name="password"
+            class="w-full p-3 rounded bg-[#388E3C] text-[#F5E1C0] placeholder-[#F5E1C0] focus:outline-none focus:ring-2 focus:ring-[#FFC107]"
+            placeholder="Ingresa tu contraseña"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          class="w-full bg-[#D32F2F] text-[#F5E1C0] p-3 rounded-lg hover:bg-[#FFC107] transition-colors duration-300"
+        >
+          Iniciar Sesión
+        </button>
+        <p *ngIf="errorMessage" class="text-red-500 text-sm mt-4 text-center">{{ errorMessage }}</p>
+        <div class="text-center">
+          <p class="text-sm">¿No tienes una cuenta? <a href="/signup" class="text-[#FFC107] hover:underline">PUES COMPRA AJJAA</a></p>
+        </div>
+        <div class="flex items-center justify-center space-x-4">
+          <button class="flex items-center justify-center bg-[#388E3C] text-[#F5E1C0] p-2 rounded-lg hover:bg-[#FFC107] transition-colors duration-300">
+            <img src="assets/home.svg" alt="exit" class="w-5 h-5 mr-2">
+            Volver al Inicio
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>

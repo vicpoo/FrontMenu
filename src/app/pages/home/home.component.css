@@ -1,0 +1,32 @@
+/*home.component.css*/
+/* Estilos para el carrusel */
+.swiper-container {
+    width: 100%;
+    height: 500px;
+    overflow: hidden; /* Evita el scroll horizontal */
+  }
+  
+  .swiper-slide {
+    position: relative;
+  }
+  
+  .swiper-pagination-bullet {
+    background: white;
+  }
+  
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: white;
+    position: absolute; /* Asegura que los botones estén posicionados correctamente */
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+  }
+  
+  .swiper-button-next {
+    right: 10px;
+  }
+  
+  .swiper-button-prev {
+    left: 10px;
+  }
