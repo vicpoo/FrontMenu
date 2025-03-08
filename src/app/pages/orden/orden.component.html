@@ -1,0 +1,67 @@
+<app-navbar></app-navbar>
+<div class="p-5 text-center bg-[#F5E1C0] min-h-screen">
+  <h1 class="text-3xl font-bold mb-6 text-[#D32F2F]">¿Qué desea ordenar?</h1>
+
+  <!-- Selección de mesa -->
+  <div class="mb-8">
+    <label class="block text-[#212121] font-semibold mb-2">Seleccione la mesa:</label>
+    <select
+      [(ngModel)]="orden.mesa_id"
+      class="p-2 border border-[#212121] rounded-lg bg-white"
+    >
+      <option *ngFor="let mesa of mesas" [value]="mesa.id">
+        Mesa {{ mesa.numero_mesa }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Lista de platillos -->
+  <div *ngFor="let platillo of platillos" class="mb-6">
+    <div class="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm">
+      <div>
+        <h2 class="text-xl font-semibold text-[#D32F2F]">{{ platillo.nombre }}</h2>
+        <p class="text-[#388E3C]">{{ platillo.descripcion }}</p>
+        <p class="text-[#212121] font-bold">Precio: ${{ platillo.precio }}</p>
+      </div>
+      <div>
+        <input
+          type="number"
+          min="0"
+          [ngModel]="obtenerCantidad(platillo.id!)"
+          (ngModelChange)="actualizarCantidad(platillo.id!, $event)"
+          class="w-20 p-2 border border-[#212121] rounded-lg"
+          placeholder="Cantidad"
+        />
+        <button
+          (click)="agregarPlatillo(platillo.id!, obtenerCantidad(platillo.id!) || 0)"
+          class="ml-2 bg-[#FFC107] text-[#212121] font-semibold py-2 px-4 rounded-lg hover:bg-[#D32F2F] hover:text-white transition-colors"
+        >
+          Agregar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón para confirmar la orden -->
+  <div class="mt-8">
+    <button
+      (click)="confirmarOrden()"
+      class="bg-[#FFC107] text-[#212121] font-semibold py-2 px-4 rounded-lg hover:bg-[#D32F2F] hover:text-white transition-colors"
+    >
+      Confirmar Orden
+    </button>
+  </div>
+
+  <!-- Resumen de la orden (ticket) -->
+  <div *ngIf="mostrarConfirmacion" class="mt-8 p-6 bg-white rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold text-[#D32F2F] mb-4">Resumen de la Orden</h2>
+    <div *ngFor="let detalle of orden.detalles" class="mb-4">
+      <p class="text-[#212121]">
+        {{ obtenerNombrePlatillo(detalle.platillo_id) }} -
+        Cantidad: {{ detalle.cantidad }} -
+        ${{ obtenerPrecioPlatillo(detalle.platillo_id) * detalle.cantidad }}
+      </p>
+    </div>
+    <p class="text-xl font-bold text-[#388E3C]">Total: ${{ calcularTotal() }}</p>
+  </div>
+</div>

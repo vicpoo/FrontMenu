@@ -4,11 +4,13 @@ import { Platillo } from '../../interfaces/platillo.interface';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NavbarComponent } from "../../components/navbar/navbar.component";
+import { RouterLink } from '@angular/router';
+
 
 @Component({
   selector: 'app-menu',
   standalone: true, // Habilita el modo standalone
-  imports: [CommonModule, HttpClientModule, NavbarComponent], // Importa módulos necesarios
+  imports: [CommonModule, HttpClientModule, NavbarComponent,RouterLink], // Importa módulos necesarios
   templateUrl: './menu.component.html',
 })
 export class MenuComponent implements OnInit {
