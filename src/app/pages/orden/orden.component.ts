@@ -1,3 +1,4 @@
+//orden.component.ts
 import { Component, OnInit } from '@angular/core';
 import { PlatilloService } from '../../services/platillo.service';
 import { MesaService } from '../../services/mesa.service';
@@ -12,19 +13,19 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-orden',
   standalone: true,
-  imports: [NavbarComponent, NgFor, FormsModule, NgIf], // Importa módulos necesarios
+  imports: [NavbarComponent, NgFor, FormsModule, NgIf],
   templateUrl: './orden.component.html',
 })
 export class OrdenComponent implements OnInit {
-  platillos: Platillo[] = []; // Lista de platillos disponibles
-  mesas: Mesa[] = []; // Lista de mesas disponibles
+  platillos: Platillo[] = [];
+  mesas: Mesa[] = [];
   orden: Orden = {
     mesa_id: 0,
-    estado: 'pendiente',
+    estado: 'pendiente', // Estado por defecto
     detalles: [],
   };
-  mostrarConfirmacion: boolean = false; // Controla la visibilidad del resumen de la orden
-  cantidadMap: Map<number, number> = new Map(); // Mapa para almacenar la cantidad de cada platillo
+  mostrarConfirmacion: boolean = false;
+  cantidadMap: Map<number, number> = new Map();
 
   constructor(
     private platilloService: PlatilloService,
@@ -61,28 +62,57 @@ export class OrdenComponent implements OnInit {
 
   agregarPlatillo(platilloId: number, cantidad: number): void {
     if (cantidad > 0) {
-      const detalle: DetalleOrden = {
-        platillo_id: platilloId,
-        cantidad: cantidad,
-      };
-      this.orden.detalles.push(detalle);
+      const detalleExistente = this.orden.detalles.find(
+        (d) => d.platillo_id === platilloId
+      );
+      if (detalleExistente) {
+        detalleExistente.cantidad += cantidad;
+      } else {
+        const detalle: DetalleOrden = {
+          platillo_id: platilloId,
+          cantidad: cantidad,
+        };
+        this.orden.detalles.push(detalle);
+      }
       this.cantidadMap.set(platilloId, 0); // Limpia la cantidad después de agregar
     }
   }
 
   confirmarOrden(): void {
+    // Asegúrate de que el estado esté siempre presente
+    this.orden.estado = 'pendiente';
+
+    // Convierte mesa_id a número
+    this.orden.mesa_id = Number(this.orden.mesa_id);
+
+    // Depuración: Imprime el objeto orden antes de enviarlo
+    console.log('Objeto orden que se enviará:', this.orden);
+    console.log('Tipo de mesa_id:', typeof this.orden.mesa_id); // Verifica el tipo de mesa_id
+
     if (this.orden.mesa_id && this.orden.detalles.length > 0) {
       this.ordenService.createOrden(this.orden).subscribe(
         (response) => {
-          this.mostrarConfirmacion = true; // Muestra el resumen de la orden
+          this.mostrarConfirmacion = true;
+          this.limpiarOrden(); // Limpia la orden después de confirmar
         },
         (error) => {
           console.error('Error al crear la orden:', error);
+          console.error('Detalles del error:', error.error); // Muestra los detalles del error
         }
       );
     } else {
       alert('Selecciona una mesa y al menos un platillo.');
     }
+  }
+
+  limpiarOrden(): void {
+    // Reinicia el objeto orden con el estado por defecto
+    this.orden = {
+      mesa_id: 0,
+      estado: 'pendiente',
+      detalles: [],
+    };
+    this.cantidadMap.clear();
   }
 
   calcularTotal(): number {
@@ -102,12 +132,10 @@ export class OrdenComponent implements OnInit {
     return platillo ? platillo.precio : 0;
   }
 
-  // Método para obtener la cantidad de un platillo desde el mapa
   obtenerCantidad(platilloId: number): number {
     return this.cantidadMap.get(platilloId) || 0;
   }
 
-  // Método para actualizar la cantidad de un platillo en el mapa
   actualizarCantidad(platilloId: number, cantidad: number): void {
     this.cantidadMap.set(platilloId, cantidad);
   }
