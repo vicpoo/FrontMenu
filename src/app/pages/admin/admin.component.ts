@@ -4,7 +4,8 @@ import { Router } from '@angular/router';
 import { OrdenService } from '../../services/orden.service';
 import { MesaService } from '../../services/mesa.service';
 import { PlatilloService } from '../../services/platillo.service';
-import { Orden } from '../../interfaces/orden.interface';
+import { OrdenSegundaApiService } from '../../services/orden-segunda-api.service'; // Nuevo servicio
+import { Orden, OrdenSegundaApi } from '../../interfaces/orden.interface'; // Interfaces
 import { Mesa } from '../../interfaces/mesa.interface';
 import { Platillo } from '../../interfaces/platillo.interface';
 import { FormsModule } from '@angular/forms';
@@ -13,11 +14,11 @@ import { NgFor, NgIf } from '@angular/common';
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [FormsModule, NgFor,NgIf],
+  imports: [FormsModule, NgFor, NgIf],
   templateUrl: './admin.component.html',
 })
 export class AdminComponent {
-  ordenes: Orden[] = [];
+  ordenes: OrdenSegundaApi[] = []; // Usamos la interfaz de la segunda API
   mesas: Mesa[] = [];
   platillos: Platillo[] = [];
 
@@ -41,27 +42,31 @@ export class AdminComponent {
 
   // Variables para el estado de los pedidos
   selectedEstado: string = '';
-  selectedOrden: Orden | null = null;
+  selectedOrden: OrdenSegundaApi | null = null; // Usamos la interfaz de la segunda API
 
   constructor(
     private router: Router,
     private ordenService: OrdenService,
+    private ordenSegundaApiService: OrdenSegundaApiService, // Inyectamos el nuevo servicio
     private mesaService: MesaService,
     private platilloService: PlatilloService
   ) {}
 
   ngOnInit(): void {
-    this.loadOrdenes();
+    this.loadOrdenes(); // Cargar órdenes de la segunda API
     this.loadMesas();
     this.loadPlatillos();
   }
 
-  // Cargar todas las órdenes
+  // Cargar todas las órdenes de la segunda API
   loadOrdenes(): void {
-    this.ordenService.getOrdenes().subscribe((data) => {
-      this.ordenes = data;
+    this.ordenSegundaApiService.getOrdenes().subscribe((data) => {
+      console.log('Órdenes obtenidas de la API:', data);
+      this.ordenes = data.filter((orden) => orden.estado.toLowerCase() !== 'cancelada');
+      console.log('Órdenes filtradas:', this.ordenes);
     });
   }
+
 
   // Cargar todas las mesas
   loadMesas(): void {
@@ -166,7 +171,7 @@ export class AdminComponent {
   }
 
   // Abrir modal para actualizar el estado de un pedido
-  openEstadoModal(orden: Orden): void {
+  openEstadoModal(orden: OrdenSegundaApi): void {
     this.selectedOrden = orden;
     this.selectedEstado = orden.estado;
     this.showEstadoModal = true;
@@ -182,9 +187,9 @@ export class AdminComponent {
   // Actualizar el estado de un pedido
   updateEstado(): void {
     if (this.selectedOrden && this.selectedOrden.id) {
-      this.selectedOrden.estado = this.selectedEstado;
-      this.ordenService.updateOrden(this.selectedOrden.id, this.selectedOrden).subscribe(() => {
-        this.loadOrdenes();
+      const nuevoEstado = { estado: this.selectedEstado };
+      this.ordenSegundaApiService.updateEstadoOrden(this.selectedOrden.id, nuevoEstado).subscribe(() => {
+        this.loadOrdenes(); // Recargar las órdenes después de actualizar
         this.closeEstadoModal();
       });
     }

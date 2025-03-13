@@ -12,3 +12,11 @@ export interface DetalleOrden {
     estado: string;
     detalles: DetalleOrden[];
   }
+
+
+  export interface OrdenSegundaApi {
+    id?: number;
+    mesa_id: number;
+    estado: string;
+    detalles: DetalleOrden[];
+  }
